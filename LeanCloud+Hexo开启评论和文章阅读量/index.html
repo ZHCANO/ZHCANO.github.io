@@ -36,7 +36,7 @@
 <meta property="og:image" content="http://zhcan.online/LeanCloud+Hexo%E5%BC%80%E5%90%AF%E8%AF%84%E8%AE%BA%E5%92%8C%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB%E9%87%8F/image-20231228185524697.png">
 <meta property="og:image" content="http://zhcan.online/LeanCloud+Hexo%E5%BC%80%E5%90%AF%E8%AF%84%E8%AE%BA%E5%92%8C%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB%E9%87%8F/image-20231228185820048.png">
 <meta property="article:published_time" content="2023-12-28T11:00:00.000Z">
-<meta property="article:modified_time" content="2023-12-28T11:48:30.388Z">
+<meta property="article:modified_time" content="2023-12-29T06:51:37.956Z">
 <meta property="article:author" content="ZHCANO">
 <meta property="article:tag" content="hexo">
 <meta property="article:tag" content="LeanCloud">
@@ -274,7 +274,7 @@
         
         
         
-          9 分钟
+          10 分钟
         
       </span>
     
@@ -346,6 +346,10 @@
 <p>重新启动hexo，如果文章底部出现了评论区，就说明部署成功了。</p>
 <p>(4) 点击数据存储-&gt;结构化数据库-&gt;Comment，可以管理评论区的评论。</p>
 <p><img src="/./LeanCloud+Hexo%E5%BC%80%E5%90%AF%E8%AF%84%E8%AE%BA%E5%92%8C%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB%E9%87%8F/image-20231228184523762.png" srcset="/img/loading.gif" lazyload></p>
+<div class="note note-success">
+            <p>TIP：我关闭了评论功能，因为开启评论公安备案似乎要选交互式。</p>
+          </div>
+
 <h2 id="3-开启网页-文章阅读量、访问量统计"><a href="#3-开启网页-文章阅读量、访问量统计" class="headerlink" title="3. 开启网页&#x2F;文章阅读量、访问量统计"></a>3. 开启网页&#x2F;文章阅读量、访问量统计</h2><p>(1) 网页访问统计</p>
 <p><img src="/./LeanCloud+Hexo%E5%BC%80%E5%90%AF%E8%AF%84%E8%AE%BA%E5%92%8C%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB%E9%87%8F/image-20231228185018320.png" srcset="/img/loading.gif" lazyload></p>
 <p>(2) 点击数据存储-&gt;结构化数据库-&gt;创建Class，填写Class名称为Counter（必须为Counter），选择无限制，创建。</p>
@@ -485,37 +489,6 @@
             </div>
 
             
-  
-  
-    <article id="comments" lazyload>
-      
-  <div id="valine"></div>
-  <script type="text/javascript">
-    Fluid.utils.loadComments('#valine', function() {
-      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
-        var options = Object.assign(
-          {"appId":"SHaViR74uoHFPYKeeWZbmg7x-gzGzoHsz","appKey":"Oo0n0zFtXYWTcelWqOEWFSg5","appid":"SHaViR74uoHFPYKeeWZbmg7x-gzGzoHsz","appkey":"Oo0n0zFtXYWTcelWqOEWFSg5","app_Id":"SHaViR74uoHFPYKeeWZbmg7x-gzGzoHsz","app_Key":"Oo0n0zFtXYWTcelWqOEWFSg5","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
-          {
-            el: "#valine",
-            path: window.location.pathname
-          }
-        )
-        new Valine(options);
-        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
-          var imgSelector = '#valine .vcontent img:not(.vemoji)';
-          Fluid.plugins.imageCaption(imgSelector);
-          Fluid.plugins.fancyBox(imgSelector);
-        })
-      });
-    });
-  </script>
-  <noscript>Please enable JavaScript to view the comments</noscript>
-
-
-    </article>
-  
-
-
           </article>
         </div>
       </div>
