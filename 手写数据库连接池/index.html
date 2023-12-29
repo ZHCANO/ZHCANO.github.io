@@ -1,0 +1,966 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZHCANO">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="手写数据库连接池，实现连接池的基本功能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手写数据库连接池">
+<meta property="og:url" content="http://zhcan.online/%E6%89%8B%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/index.html">
+<meta property="og:site_name" content="学思行录">
+<meta property="og:description" content="手写数据库连接池，实现连接池的基本功能">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhcan.online/%E6%89%8B%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/image-20231212194359092.png">
+<meta property="og:image" content="http://zhcan.online/%E6%89%8B%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/image-20231212195224271.png">
+<meta property="og:image" content="http://zhcan.online/%E6%89%8B%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/image-20231212195956052.png">
+<meta property="og:image" content="http://zhcan.online/%E6%89%8B%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/image-20231212200957476.png">
+<meta property="og:image" content="http://zhcan.online/%E6%89%8B%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/image-20231212201531855.png">
+<meta property="og:image" content="http://zhcan.online/%E6%89%8B%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/image-20231218193730375.png">
+<meta property="article:published_time" content="2023-12-28T11:31:00.000Z">
+<meta property="article:modified_time" content="2023-12-28T11:46:33.136Z">
+<meta property="article:author" content="ZHCANO">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="连接池">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://zhcan.online/%E6%89%8B%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/image-20231212194359092.png">
+  
+  
+  
+  <title>手写数据库连接池 - 学思行录</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zhcan.online","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"SHaViR74uoHFPYKeeWZbmg7x-gzGzoHsz","app_key":"Oo0n0zFtXYWTcelWqOEWFSg5","appId":"SHaViR74uoHFPYKeeWZbmg7x-gzGzoHsz","appKey":"Oo0n0zFtXYWTcelWqOEWFSg5","appid":"SHaViR74uoHFPYKeeWZbmg7x-gzGzoHsz","appkey":"Oo0n0zFtXYWTcelWqOEWFSg5","app_Id":"SHaViR74uoHFPYKeeWZbmg7x-gzGzoHsz","app_Key":"Oo0n0zFtXYWTcelWqOEWFSg5","server_url":"https://shavir74.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', '');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>ZHCANO</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="手写数据库连接池"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-12-28 19:31" pubdate>
+          2023年12月28日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          11k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          95 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">手写数据库连接池</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="项目背景"><a href="#项目背景" class="headerlink" title="项目背景"></a>项目背景</h2><p>在高并发情况下，如果每次用户访问数据库都需要创建和销毁数据库连接对象，这将导致大量的TCP三次握手、MySQL Server连接认证、MySQL Server关闭连接以及资源回收的操作，这些过程会带来巨大的性能开销。如果在一开始就创建好一些连接对象存放在连接池中，<strong>当用户需要时从连接池中取出，用完时归还，就可以起到资源重用</strong>，从而节省了频繁创建连接销毁连接所花费的时间，提升系统响应的速度。</p>
+<h2 id="连接池功能"><a href="#连接池功能" class="headerlink" title="连接池功能"></a>连接池功能</h2><ul>
+<li><p><strong>初始连接量（initSize）</strong></p>
+<ul>
+<li><p>连接池事先和MySQLServer创建initSize个连接</p>
+</li>
+<li><p>当应用发起MySQL访问时，直接从连接池中获取一个可用的连接，使用完成后归还连接池</p>
+</li>
+</ul>
+</li>
+<li><p><strong>最大连接量（maxSize）</strong></p>
+<ul>
+<li><p>当并发访问MySQL请求增多至超过初始连接量时，连接池会根据数量请求去创建更多的连接。</p>
+</li>
+<li><p>但是连接的数量上限是maxSize，因为连接占用socket资源，如果连接池占用过多的socket资源，那么服务器就不能接收太多的客户端请求了。（连接池和服务器部署在同一台主机上）</p>
+</li>
+</ul>
+</li>
+<li><p><strong>最大空闲时间（maxIdleTime）</strong></p>
+<ul>
+<li>如果新增加的连接在最大空闲时间内都没有被使用，那么这些连接就会被回收</li>
+</ul>
+</li>
+<li><p><strong>连接超时时间（connectionTimeout）</strong></p>
+<ul>
+<li>如果在connectionTimeout内都没有空闲的连接可以使用，那么连接就会失败，无法访问数据库</li>
+</ul>
+</li>
+</ul>
+<h2 id="连接池设计"><a href="#连接池设计" class="headerlink" title="连接池设计"></a>连接池设计</h2><p><img src="/./%E6%89%8B%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/image-20231212194359092.png" srcset="/img/loading.gif" lazyload alt="image-20231212194359092"></p>
+<h2 id="关键技术点"><a href="#关键技术点" class="headerlink" title="关键技术点"></a>关键技术点</h2><ul>
+<li>MySQL数据库编程</li>
+<li>单例模式</li>
+<li>C++11多线程编程、生产者-消费者线程模型</li>
+<li>智能指针shared_ptr、lambda表达式</li>
+</ul>
+<h2 id="项目配置"><a href="#项目配置" class="headerlink" title="项目配置"></a>项目配置</h2><p>使用vs2019编写项目代码，由于需要调用MySQL API来完成数据库的连接、查询和更新等操作，需要在vs2019中导入MySQL的头文件、库文件。</p>
+<ol>
+<li><p>VS2019选择X64，因为安装的MySQL是64位的</p>
+<p><img src="/./%E6%89%8B%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/image-20231212195224271.png" srcset="/img/loading.gif" lazyload alt="image-20231212195224271"></p>
+</li>
+<li><p>右键项目 - 属性 - C&#x2F;C++ - 常规 - 附加包含目录，填写mysql.h头文件的路径（例如：D:\developer_tools\MySQL\Files\MySQL Server 5.7\include）。注意：先在源文件下创建一个.cpp文件后，下图中C&#x2F;C++的选项才会出现。</p>
+<p><img src="/./%E6%89%8B%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/image-20231212195956052.png" srcset="/img/loading.gif" lazyload alt="image-20231212195956052"></p>
+</li>
+<li><p>右键项目 - 属性 - 链接器 - 常规 - 附加库目录，填写libmysql.lib的路径（D:\developer_tools\MySQL\Files\MySQL Server 5.7\lib）</p>
+</li>
+<li><p>右键项目 - 属性 - 链接器 - 输入 - 附加依赖项，填写libmysql.lib库的名字（libmysql.lib）（静态库）</p>
+</li>
+<li><p>把libmysql.dll动态链接库（Linux下后缀名是.so库）放在工程目录下（动态库）</p>
+<p><img src="/./%E6%89%8B%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/image-20231212200957476.png" srcset="/img/loading.gif" lazyload alt="image-20231212200957476"></p>
+</li>
+</ol>
+<h2 id="数据库编程"><a href="#数据库编程" class="headerlink" title="数据库编程"></a>数据库编程</h2><p><strong>创建数据表</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">create</span> databases pool;<br>use pool;<br><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> <span class="hljs-keyword">user</span>(id <span class="hljs-type">INT</span>(<span class="hljs-number">11</span>) <span class="hljs-keyword">PRIMARY</span> KEY <span class="hljs-keyword">NOT</span> <span class="hljs-keyword">NULL</span> AUTO_INCREMENT,<br>    name <span class="hljs-type">VARCHAR</span>(<span class="hljs-number">50</span>) <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>    age <span class="hljs-type">INT</span>(<span class="hljs-number">11</span>) <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>    sex ENUM(<span class="hljs-string">&#x27;male&#x27;</span>,<span class="hljs-string">&#x27;female&#x27;</span>) <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>)ENGINE<span class="hljs-operator">=</span>INNODB <span class="hljs-keyword">DEFAULT</span> CHARSET<span class="hljs-operator">=</span>utf8;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/./%E6%89%8B%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/image-20231212201531855.png" srcset="/img/loading.gif" lazyload alt="image-20231212201531855"></p>
+<p><strong>MySQL C API</strong></p>
+<p>需要包含头文件<code>#include &lt;mysql.h&gt;</code></p>
+<ul>
+<li><p>初始化MySQL连接</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 成功返回mysql指针，失败返回NULL</span><br>MYSQL *<span class="hljs-title function_">mysql_init</span><span class="hljs-params">(MYSQL *mysql)</span> ;<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>连接MySQL服务器</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 成功返回mysql指针，失败返回NULL</span><br>MYSQL * STDCALL <span class="hljs-title function_">mysql_real_connect</span><span class="hljs-params">(MYSQL *mysql, </span><br><span class="hljs-params">                                <span class="hljs-type">const</span> <span class="hljs-type">char</span> *host,   <span class="hljs-comment">// mysql服务器的主机地址</span></span><br><span class="hljs-params">                                <span class="hljs-type">const</span> <span class="hljs-type">char</span> *user,   <span class="hljs-comment">// 登录用户名</span></span><br><span class="hljs-params">                                <span class="hljs-type">const</span> <span class="hljs-type">char</span> *passwd, <span class="hljs-comment">// 登录密码</span></span><br><span class="hljs-params">                                <span class="hljs-type">const</span> <span class="hljs-type">char</span> *db,     <span class="hljs-comment">// 使用的数据库名称</span></span><br><span class="hljs-params">                                <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> port,  <span class="hljs-comment">// MySQL端口</span></span><br><span class="hljs-params">                                <span class="hljs-type">const</span> <span class="hljs-type">char</span> *unix_socket,    <span class="hljs-comment">// 本地套接字, 不使用指定为NULL</span></span><br><span class="hljs-params">                                <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> clientflag)</span>;  <span class="hljs-comment">// 连接标志，通常为0</span><br></code></pre></td></tr></table></figure>
+</li>
+<li><p>执行sql语句</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 执行一个sql语句, 增删查改的sql语句都可以</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">mysql_query</span><span class="hljs-params">(MYSQL *mysql, <span class="hljs-type">const</span> <span class="hljs-type">char</span> *query)</span>;<br>参数:<br>    - mysql: mysql_real_connect()的返回值<br>    - query: 一个可以执行的sql语句, 结尾的位置不需要加<span class="hljs-string">&#x27;;&#x27;</span><br>返回值: <br>    - 如果查询成功，返回<span class="hljs-number">0</span>。如果是查询, 结果集在mysql对象中<br>    - 如果出现错误，返回非<span class="hljs-number">0</span>值。<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>获取结果集</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs scss">MYSQL_RES *<span class="hljs-built_in">mysql_use_result</span>(_conn);<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>关闭MySQL</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">mysql_close(&amp;mysql);<br></code></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>使用C++封装MySQL C API</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-meta">#<span class="hljs-keyword">ifndef</span> CONNECTION_H</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> CONNECTION_H</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;mysql.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;ctime&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;public.h&quot;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Connection</span> &#123;<br><span class="hljs-keyword">public</span>:<br>	<span class="hljs-comment">// 初始化数据库连接</span><br>	<span class="hljs-built_in">Connection</span>();<br><br>	<span class="hljs-comment">// 释放数据库连接</span><br>	~<span class="hljs-built_in">Connection</span>();<br><br>	<span class="hljs-comment">// 连接数据库</span><br>	<span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">connect</span><span class="hljs-params">(string ip, <span class="hljs-type">unsigned</span> <span class="hljs-type">short</span> port, string user, string passward, string dbname)</span></span>;<br><br>	<span class="hljs-comment">// 更新操作insert/delete/update</span><br>	<span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">update</span><span class="hljs-params">(string sql)</span></span>;<br><br>	<span class="hljs-comment">// 查询操作select</span><br>	<span class="hljs-function">MYSQL_RES* <span class="hljs-title">query</span><span class="hljs-params">(string sql)</span></span>;<br><span class="hljs-keyword">private</span>:<br>	MYSQL* conn_; <span class="hljs-comment">// 表示和MySQL Server的一条连接</span><br>&#125;;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs CPP"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;Connection.h&quot;</span></span><br><span class="hljs-comment">/*</span><br><span class="hljs-comment">* 实现MySQL数据库的增删改查操作</span><br><span class="hljs-comment">*/</span><br><span class="hljs-comment">// 初始化数据库连接</span><br>Connection::<span class="hljs-built_in">Connection</span>() &#123;<br>	conn_ = <span class="hljs-built_in">mysql_init</span>(<span class="hljs-literal">nullptr</span>);<br>&#125;<br><br><span class="hljs-comment">// 释放数据库连接</span><br>Connection::~<span class="hljs-built_in">Connection</span>() &#123;<br>	<span class="hljs-keyword">if</span> (conn_ != <span class="hljs-literal">nullptr</span>)<br>		<span class="hljs-built_in">mysql_close</span>(conn_);<br>&#125;<br><br><span class="hljs-comment">// 连接数据库</span><br><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">Connection::connect</span><span class="hljs-params">(string ip, <span class="hljs-type">unsigned</span> <span class="hljs-type">short</span> port, string user, string password, string dbname)</span> </span>&#123;<br>	MYSQL* p = <span class="hljs-built_in">mysql_real_connect</span>(conn_, ip.<span class="hljs-built_in">c_str</span>(), user.<span class="hljs-built_in">c_str</span>(),<br>		password.<span class="hljs-built_in">c_str</span>(), dbname.<span class="hljs-built_in">c_str</span>(), port, <span class="hljs-literal">nullptr</span>, <span class="hljs-number">0</span>);<br>	<span class="hljs-comment">// 输出连接失败原因</span><br>	cerr &lt;&lt; <span class="hljs-built_in">mysql_error</span>(conn_) &lt;&lt; endl;<br>	<span class="hljs-keyword">return</span> p != <span class="hljs-literal">nullptr</span>;<br>&#125;<br><br><span class="hljs-comment">// 更新操作insert/delete/update</span><br><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">Connection::update</span><span class="hljs-params">(string sql)</span> </span>&#123;<br>	<span class="hljs-keyword">if</span> (<span class="hljs-built_in">mysql_query</span>(conn_, sql.<span class="hljs-built_in">c_str</span>())) &#123;<br>		<span class="hljs-built_in">LOG</span>(<span class="hljs-string">&quot;Update Failed:&quot;</span> + sql);<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>&#125;<br><br><span class="hljs-comment">// 查询操作select</span><br><span class="hljs-function">MYSQL_RES* <span class="hljs-title">Connection::query</span><span class="hljs-params">(string sql)</span> </span>&#123;<br>	<span class="hljs-keyword">if</span> (<span class="hljs-built_in">mysql_query</span>(conn_, sql.<span class="hljs-built_in">c_str</span>()))&#123;<br>		<span class="hljs-built_in">LOG</span>(<span class="hljs-string">&quot;Query Failed:&quot;</span> + sql);<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nullptr</span>;<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-built_in">mysql_use_result</span>(conn_);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>测试一下效果：</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;Connection.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>	Connection conn;<br>	string sql = <span class="hljs-string">&quot;insert into user(name,age,sex) values(&#x27;li&#x27;, 21, &#x27;female&#x27;)&quot;</span>;<br>	conn.<span class="hljs-built_in">connect</span>(<span class="hljs-string">&quot;127.0.0.1&quot;</span>, <span class="hljs-number">13306</span>, <span class="hljs-string">&quot;root&quot;</span>, <span class="hljs-string">&quot;123456&quot;</span>, <span class="hljs-string">&quot;pool&quot;</span>);<br>	conn.<span class="hljs-built_in">update</span>(sql);<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>可以看到，成功插入一条新数据：</p>
+<p><img src="/./%E6%89%8B%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/image-20231218193730375.png" srcset="/img/loading.gif" lazyload alt="image-20231218193730375"></p>
+<h2 id="功能模块实现"><a href="#功能模块实现" class="headerlink" title="功能模块实现"></a>功能模块实现</h2><h3 id="线程安全的懒汉式单例模式"><a href="#线程安全的懒汉式单例模式" class="headerlink" title="线程安全的懒汉式单例模式"></a>线程安全的懒汉式单例模式</h3><p>连接池只需要一个实例，所以ConnectionPool应该按照单例模式设计，即一个类不管创建多少对象，永远只能得到该类型的一个对象实例。单例模式又分为懒汉式单例模式和饿汉式单例模式。相比于懒汉式单例模式，饿汉式单例模式在没有需要获取实例对象前，实例对象就已经产生了，这样会浪费系统资源使启动时间过长。因此，在数据库连接池的设计中，我们使用线程安全的懒汉式单例模式。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-meta">#<span class="hljs-keyword">ifndef</span> CONNECTIONPOOL_H</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> CONNECTIONPOOL_H</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;Connection.h&quot;</span></span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ConnectionPool</span> &#123;<br><span class="hljs-keyword">public</span>:<br>	<span class="hljs-comment">// 获取类的唯一实例对象的接口方法</span><br>	<span class="hljs-function"><span class="hljs-type">static</span> ConnectionPool* <span class="hljs-title">getConnectionPool</span><span class="hljs-params">()</span></span>;<br><span class="hljs-keyword">private</span>:<br>	<span class="hljs-comment">// 私有化构造函数</span><br>	<span class="hljs-built_in">ConnectionPool</span>(); <br>&#125;;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;ConnectionPool.h&quot;</span></span><br><span class="hljs-comment">// 获取类的唯一实例对象的接口方法</span><br><span class="hljs-function">ConnectionPool* <span class="hljs-title">ConnectionPool::getConnectionPool</span><span class="hljs-params">()</span> </span>&#123;<br>	<span class="hljs-type">static</span> ConnectionPool pool; <span class="hljs-comment">// 编译器自动lock和unlock</span><br>	<span class="hljs-keyword">return</span> &amp;pool;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="从配置文件加载配置项"><a href="#从配置文件加载配置项" class="headerlink" title="从配置文件加载配置项"></a>从配置文件加载配置项</h3><ul>
+<li>打开配置文件</li>
+<li>判断文件是否存在</li>
+<li>循环按行读取记录，按&#x3D;和\n分割提取key和value</li>
+<li>给私有成员赋值</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// 从配置文件加载配置项</span><br><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">ConnectionPool::loadConfigFile</span><span class="hljs-params">()</span> </span>&#123;<br>	<span class="hljs-comment">// 以只读方式打开mysql.ini</span><br>	ifstream ifs;<br>	ifs.<span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;mysql.ini&quot;</span>, ios::in);<br>	<br>	<span class="hljs-comment">// 判断配置文件是否存在</span><br>	<span class="hljs-keyword">if</span> (!ifs.<span class="hljs-built_in">is_open</span>()) &#123;<br>		<span class="hljs-built_in">LOG</span>(<span class="hljs-string">&quot;mysql.ini file is not exist!&quot;</span>);<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>	&#125;<br><br>	<span class="hljs-comment">// 循环按行读取记录，按=和\n分割提取key和value</span><br>	string line;<br>	<span class="hljs-keyword">while</span> (std::<span class="hljs-built_in">getline</span>(ifs, line)) &#123;<br>		string str = line;<br>		<span class="hljs-type">int</span> idx = str.<span class="hljs-built_in">find</span>(<span class="hljs-string">&#x27;=&#x27;</span>, <span class="hljs-number">0</span>);<br>		<span class="hljs-keyword">if</span> (idx == <span class="hljs-number">-1</span>) &#123; <span class="hljs-comment">// 无效的配置项</span><br>			<span class="hljs-keyword">continue</span>;<br>		&#125;<br>		<span class="hljs-type">int</span> endIdx = str.<span class="hljs-built_in">find</span>(<span class="hljs-string">&#x27;\n&#x27;</span>, idx);<br>		string key = str.<span class="hljs-built_in">substr</span>(<span class="hljs-number">0</span>, idx);<br>		string value = str.<span class="hljs-built_in">substr</span>(idx + <span class="hljs-number">1</span>, endIdx - idx - <span class="hljs-number">1</span>);<br>		<span class="hljs-keyword">if</span> (key == <span class="hljs-string">&quot;ip&quot;</span>) &#123;<br>			ip_ = value;<br>		&#125;<br>		<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (key == <span class="hljs-string">&quot;port&quot;</span>) &#123;<br>			port_ = <span class="hljs-built_in">stoi</span>(value);<br>		&#125;<br>		<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (key == <span class="hljs-string">&quot;username&quot;</span>) &#123;<br>			username_ = value;<br>		&#125;<br>		<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (key == <span class="hljs-string">&quot;passward&quot;</span>) &#123;<br>			passward_ = value;<br>		&#125;<br>		<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (key == <span class="hljs-string">&quot;dbname&quot;</span>) &#123;<br>			dbname_ = value;<br>		&#125;<br>		<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (key == <span class="hljs-string">&quot;initSize&quot;</span>) &#123;<br>			initSize_ = <span class="hljs-built_in">stoi</span>(value);<br>		&#125;<br>		<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (key == <span class="hljs-string">&quot;maxSize&quot;</span>) &#123;<br>			maxSize_ = <span class="hljs-built_in">stoi</span>(value);<br>		&#125;<br>		<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (key == <span class="hljs-string">&quot;maxIdleTime&quot;</span>) &#123;<br>			maxIdleTime_ = <span class="hljs-built_in">stoi</span>(value);<br>		&#125;<br>		<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (key == <span class="hljs-string">&quot;connectionTimeout&quot;</span>) &#123;<br>			connectionTimeout_ = <span class="hljs-built_in">stoi</span>(value);<br>		&#125;<br>	&#125;<br>	ifs.<span class="hljs-built_in">close</span>();<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="连接池的构造"><a href="#连接池的构造" class="headerlink" title="连接池的构造"></a>连接池的构造</h3><ul>
+<li>加载配置项</li>
+<li>创建初始数量的连接</li>
+<li>启动连接池的生产者线程</li>
+<li>启动连接池定时清理线程</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-meta">#<span class="hljs-keyword">ifndef</span> CONNECTIONPOOL_H</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> CONNECTIONPOOL_H</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;Connection.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;fstream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;mutex&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;queue&gt;</span></span><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ConnectionPool</span> &#123;<br><span class="hljs-keyword">public</span>:<br>	<span class="hljs-comment">// 获取类的唯一实例对象的接口方法</span><br>	<span class="hljs-function"><span class="hljs-type">static</span> ConnectionPool* <span class="hljs-title">getConnectionPool</span><span class="hljs-params">()</span></span>;<br><span class="hljs-keyword">private</span>:<br>	<span class="hljs-comment">// 私有化构造函数</span><br>	<span class="hljs-built_in">ConnectionPool</span>(); <br><br>	<span class="hljs-comment">// 从配置文件加载配置项</span><br>	<span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">loadConfigFile</span><span class="hljs-params">()</span></span>;<br><br>	<span class="hljs-comment">// 生产者线程</span><br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">produceConnectionTask</span><span class="hljs-params">()</span></span>;<br><br>	<span class="hljs-comment">// 定时清理连接线程</span><br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">scannerConnectionTask</span><span class="hljs-params">()</span></span>;<br><br>	string ip_; <span class="hljs-comment">// ip地址</span><br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> port_; <span class="hljs-comment">// 端口号</span><br>	string username_; <span class="hljs-comment">// 用户名</span><br>	string passward_; <span class="hljs-comment">// 密码</span><br>	string dbname_; <span class="hljs-comment">// 数据库名</span><br>	<span class="hljs-type">int</span> initSize_; <span class="hljs-comment">// 初始连接量</span><br>	<span class="hljs-type">int</span> maxSize_; <span class="hljs-comment">// 最大连接量</span><br>	<span class="hljs-type">int</span> maxIdleTime_; <span class="hljs-comment">// 最大空闲时间</span><br>	<span class="hljs-type">int</span> connectionTimeout_; <span class="hljs-comment">// 连接超时时间</span><br><br>	queue&lt;Connection*&gt; connectionQue_; <span class="hljs-comment">// 存储 mysql 连接的队列</span><br>	mutex queueMutex_; <span class="hljs-comment">// 维护连接队列线程安全的互斥锁</span><br>	atomic_int connectionCnt_; <span class="hljs-comment">// 记录创建的连接的总数量</span><br>	condition_variable cv; <span class="hljs-comment">// 设置条件变量，用于连接生产者线程和消费者线程的通信</span><br>&#125;;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// 连接池的构造</span><br>ConnectionPool::<span class="hljs-built_in">ConnectionPool</span>() &#123;<br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">loadConfigFile</span>()) &#123;<br>		<span class="hljs-keyword">return</span>;<br>	&#125;<br><br>	<span class="hljs-comment">// 创建初始数量的连接</span><br>	<span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; initSize_; i++) &#123;<br>		Connection* p = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Connection</span>();<br>		p-&gt;<span class="hljs-built_in">connect</span>(ip_, port_, username_, passward_, dbname_);<br>		connectionQue_.<span class="hljs-built_in">push</span>(p);<br>		connectionCnt_++;<br>	&#125;<br><br>	<span class="hljs-comment">// 启动连接池的生产者线程</span><br>	<span class="hljs-function">thread <span class="hljs-title">produce</span><span class="hljs-params">(bind(&amp;ConnectionPool::produceConnectionTask, <span class="hljs-keyword">this</span>))</span></span>;<br>	produce.<span class="hljs-built_in">detach</span>();<br><br>	<span class="hljs-comment">// 启动连接池定时清理连接线程</span><br>	<span class="hljs-function">thread <span class="hljs-title">scanner</span><span class="hljs-params">(bind(&amp;ConnectionPool::scannerConnectionTask, <span class="hljs-keyword">this</span>))</span></span>;<br>	scanner.<span class="hljs-built_in">detach</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="生产者线程"><a href="#生产者线程" class="headerlink" title="生产者线程"></a>生产者线程</h3><p><strong>作用：</strong>生产连接</p>
+<ul>
+<li>作为类的成员方法，可以很方便地访问类的成员变量<ul>
+<li>由于线程函数是C接口的方法，因此传递函数时需要用绑定器将this指针绑定到生产者线程上</li>
+</ul>
+</li>
+<li>加锁</li>
+<li>连接池队列不空时，进入等待状态</li>
+<li>连接池队列为空时，生产连接</li>
+<li>通知消费者线程</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// 启动连接池的生产者线程</span><br><span class="hljs-function">thread <span class="hljs-title">produce</span><span class="hljs-params">(bind(&amp;ConnectionPool::produceConnectionTask, <span class="hljs-keyword">this</span>))</span></span>;<br>produce.<span class="hljs-built_in">detach</span>();<br><br><span class="hljs-comment">// 生产者线程</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">ConnectionPool::produceConnectionTask</span><span class="hljs-params">()</span> </span>&#123;<br>	<span class="hljs-keyword">for</span> (;;) &#123;<br>		<span class="hljs-function">unique_lock&lt;mutex&gt; <span class="hljs-title">lock</span><span class="hljs-params">(queueMutex_)</span></span>;<br><br>		<span class="hljs-comment">// 连接池队列不空，生产者线程进入等待状态</span><br>		<span class="hljs-keyword">while</span> (!connectionQue_.<span class="hljs-built_in">size</span>())<br>			cv.<span class="hljs-built_in">wait</span>(lock);<br><br>		<span class="hljs-comment">// 连接数量没有达到上限，继续生产新的连接</span><br>		<span class="hljs-keyword">if</span> (connectionCnt_ &lt; maxSize_) &#123;<br>			Connection* p = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Connection</span>();<br>			p-&gt;<span class="hljs-built_in">connect</span>(ip_, port_, username_, passward_, dbname_);<br>			connectionQue_.<span class="hljs-built_in">push</span>(p);<br>			connectionCnt_++;<br>		&#125;<br><br>		<span class="hljs-comment">// 通知消费者线程获取连接</span><br>		cv.<span class="hljs-built_in">notify_all</span>();<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="消费者线程"><a href="#消费者线程" class="headerlink" title="消费者线程"></a>消费者线程</h3><p><strong>作用：</strong>提供给外部的接口，从连接池中获取一个可用的空闲连接。返回一个智能指针（封装了连接），因为智能指针能够出作用域自动析构，可以重定义其删除器归还连接，避免让用户自己调用函数将连接归还，简化用户操作</p>
+<ul>
+<li>加锁</li>
+<li>连接池队列为空时，进入等待状态，并判断是否连接超时</li>
+<li>连接池队列不空时，消费连接</li>
+<li>通知生产者线程</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// 消费者线程，提供给外部的接口，从连接池中获取一个可用的空闲连接</span><br><span class="hljs-function">shared_ptr&lt;Connection&gt; <span class="hljs-title">ConnectionPool::getConnection</span><span class="hljs-params">()</span> </span>&#123;<br>	<span class="hljs-function">unique_lock&lt;mutex&gt; <span class="hljs-title">lock</span><span class="hljs-params">(queueMutex_)</span></span>;<br><br>	<span class="hljs-comment">// 连接池队列为空，消费者线程进入等待状态</span><br>	<span class="hljs-keyword">while</span> (connectionQue_.<span class="hljs-built_in">empty</span>()) &#123;<br>		cv_status status = cv.<span class="hljs-built_in">wait_for</span>(lock, chrono::<span class="hljs-built_in">milliseconds</span>(connectionTimeout_)); <span class="hljs-comment">// 线程池有连接唤醒/超时唤醒</span><br>		<span class="hljs-keyword">if</span> (status == cv_status::timeout &amp;&amp; connectionQue_.<span class="hljs-built_in">empty</span>()) &#123; <span class="hljs-comment">// 超时唤醒</span><br>			<span class="hljs-built_in">LOG</span>(<span class="hljs-string">&quot;获取空闲连接超时...获取连接失败！&quot;</span>);<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nullptr</span>;<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-comment">/*</span><br><span class="hljs-comment">	* shared_ptr智能指针析构时，会把connection的资源delete，相当于调用connection的析构函数，connection就被close了</span><br><span class="hljs-comment">	* 这里需要自定义shared_ptr的释放资源的方式，把connection直接归还到队列中</span><br><span class="hljs-comment">	*/</span><br><br>	<span class="hljs-comment">// 从连接池队列取出一个连接</span><br>	<span class="hljs-function">shared_ptr&lt;Connection&gt; <span class="hljs-title">sp</span><span class="hljs-params">(connectionQue_.front(),</span></span><br><span class="hljs-params"><span class="hljs-function">		[&amp;](Connection* pcon) &#123;</span></span><br><span class="hljs-params"><span class="hljs-function">			<span class="hljs-comment">// 这是在服务器应用线程中调用的</span></span></span><br><span class="hljs-params"><span class="hljs-function">			unique_lock&lt;mutex&gt; lock(queueMutex_);</span></span><br><span class="hljs-params"><span class="hljs-function">			connectionQue_.push(pcon);</span></span><br><span class="hljs-params"><span class="hljs-function">		&#125;)</span></span>;<br>	connectionQue_.<span class="hljs-built_in">pop</span>();<br><br>	<span class="hljs-comment">// 通知生产者线程生产</span><br>	<span class="hljs-keyword">if</span> (connectionQue_.<span class="hljs-built_in">empty</span>()) &#123;<br>		cv.<span class="hljs-built_in">notify_all</span>();<br>	&#125;<br>	<span class="hljs-keyword">return</span> sp;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="定时清理连接线程"><a href="#定时清理连接线程" class="headerlink" title="定时清理连接线程"></a>定时清理连接线程</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// 定时清理连接线程</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">ConnectionPool::scannerConnectionTask</span><span class="hljs-params">()</span> </span>&#123;<br>	<span class="hljs-keyword">for</span> (;;) &#123;<br>		<span class="hljs-comment">// 通过sleep模拟定时效果</span><br>		this_thread::<span class="hljs-built_in">sleep_for</span>(chrono::<span class="hljs-built_in">seconds</span>(maxIdleTime_));<br><br>		<span class="hljs-comment">// 扫描整个队列，释放多余连接</span><br>		<span class="hljs-function">unique_lock&lt;mutex&gt; <span class="hljs-title">lock</span><span class="hljs-params">(queueMutex_)</span></span>;<br>		<span class="hljs-keyword">while</span> (!connectionQue_.<span class="hljs-built_in">empty</span>()) &#123;<br>			Connection* p = connectionQue_.<span class="hljs-built_in">front</span>();<br>			<span class="hljs-keyword">if</span> (connectionCnt_ &gt; initSize_ &amp;&amp; p-&gt;<span class="hljs-built_in">getAlivetime</span>() &gt;= maxIdleTime_ * <span class="hljs-number">1000</span>) &#123;<br>				connectionQue_.<span class="hljs-built_in">pop</span>();<br>				<span class="hljs-keyword">delete</span> p;<br>				connectionCnt_--;<br>			&#125;<br>			<span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// 队头连接没有超过最大空闲时间，其他连接肯定也没有</span><br>				<span class="hljs-keyword">break</span>;<br>			&#125;<br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="在Linux下编译数据库连接池"><a href="#在Linux下编译数据库连接池" class="headerlink" title="在Linux下编译数据库连接池"></a>在Linux下编译数据库连接池</h2><p>将源文件和头文件放在一个文件夹下，如下：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs stylus">.<br>├── Connection<span class="hljs-selector-class">.cpp</span><br>├── Connection<span class="hljs-selector-class">.h</span><br>├── ConnectionPool<span class="hljs-selector-class">.cpp</span><br>├── ConnectionPool<span class="hljs-selector-class">.h</span><br>├── <span class="hljs-selector-tag">main</span><span class="hljs-selector-class">.cpp</span><br>├── mysql<span class="hljs-selector-class">.ini</span><br>└── public.h<br></code></pre></td></tr></table></figure>
+
+<p>在终端执行g++指令：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-comment"># 进入ConnectionPool目录</span><br>cd ConnectionPool<br><span class="hljs-comment"># g++ -o 可执行文件名 源文件1/2/3... </span><br><span class="hljs-comment"># 指定头文件的位置（-I）、库文件的目录（-L）、库名（-l）</span><br><span class="hljs-comment"># mysql头文件路径（-I/usr/include/mysql） mysql库文件路径（-L/usr/lib/x86_64-linux-gnu） 库名（-lmysqlclient）</span><br>g++ -o ConnectionPool Connection.cpp ConnectionPool.cpp main.cpp -I<span class="hljs-regexp">/usr/i</span>nclude<span class="hljs-regexp">/mysql -L/u</span>sr<span class="hljs-regexp">/lib/</span>x86_64-linux-gnu -lmysqlclient -lpthread<br></code></pre></td></tr></table></figure>
+
+<p>执行：</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli"><span class="hljs-string">./ConnectionPool</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="Linux动态库"><a href="#Linux动态库" class="headerlink" title="Linux动态库"></a>Linux动态库</h2><p><strong>动态库的工作原理</strong></p>
+<ul>
+<li>静态库：GCC 进行链接时，会把静态库中代码打包到可执行程序中</li>
+<li>动态库：GCC 进行链接时，动态库的代码不会被打包到可执行程序中（会记录动态库的信息）</li>
+<li><strong>动态库在程序运行时动态载入内存，当程序用到了动态库的哪个api，动态载入器会去寻找动态库文件放到内存里面</strong></li>
+<li>可以通过ldd （list dynamic dependencies）命令检查动态库依赖关系</li>
+</ul>
+<p><strong>如何定位共享文件？</strong></p>
+<ul>
+<li>当系统加载可执行代码时候，能够知道其所依赖的库的名字，但是<strong>还需要知道绝对路径</strong></li>
+<li>系统的<strong>动态载入器来获取该绝对路径</strong></li>
+<li>对于elf格式的可执行程序，是由<strong>ld-linux.so（动态载入器）</strong>来完成的，它先后搜索elf文件的 DT_RPATH段（无法修改） ——&gt; 环境变量LD_LIBRARY_PATH ——&gt; &#x2F;etc&#x2F;ld.so.cache文件列表 ——&gt; &#x2F;lib&#x2F;，&#x2F;usr&#x2F;lib目录找到库文件后将其载入内存。</li>
+</ul>
+<p><strong>数据库连接池动态库的生成</strong></p>
+<p>生成.o的二进制目标文件，得到与位置无关的代码：</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs r"><span class="hljs-comment"># -fPIC 选项表示生成位置无关</span><br>g<span class="hljs-operator">+</span><span class="hljs-operator">+</span> <span class="hljs-operator">-</span><span class="hljs-built_in">c</span> <span class="hljs-operator">-</span>fPIC Connection.cpp ConnectionPool.cpp<br></code></pre></td></tr></table></figure>
+
+<p>生成动态库：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs stylus">g++ -shared Connection<span class="hljs-selector-class">.o</span> ConnectionPool<span class="hljs-selector-class">.o</span> -o libconpool.so<br></code></pre></td></tr></table></figure>
+
+<p>配置动态载入器加载路径：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-regexp">//</span> 修改<span class="hljs-regexp">/etc/</span>ld.so.conf <br>sudo vim <span class="hljs-regexp">/etc/</span>ld.so.conf<br><span class="hljs-regexp">//</span> 添加路径<br><span class="hljs-regexp">/home/u</span>buntu<span class="hljs-regexp">/workspace/</span>lib<br><span class="hljs-regexp">//</span> 使其生效<br>sudo ldconfig<br></code></pre></td></tr></table></figure>
+
+<p>编译链接程序：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">g++ -o conn main.cpp -L<span class="hljs-regexp">/home/u</span>buntu<span class="hljs-regexp">/workspace/</span>lib -lconpool -pthread -I<span class="hljs-regexp">/usr/i</span>nclude<span class="hljs-regexp">/mysql -L/u</span>sr<span class="hljs-regexp">/lib/</span>x86_64-linux-gnu -lmysqlclient -lpthread<br></code></pre></td></tr></table></figure>
+
+<p>运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./conn<br></code></pre></td></tr></table></figure>
+
+<h2 id="压力测试"><a href="#压力测试" class="headerlink" title="压力测试"></a>压力测试</h2><table>
+<thead>
+<tr>
+<th align="center">数据量</th>
+<th align="center">未使用连接池花费的时间</th>
+<th align="center">使用连接池花费的时间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1000</td>
+<td align="center">单线程：0.85s 四线程：0.73</td>
+<td align="center">单线程：0.06 四线程：0.04</td>
+</tr>
+<tr>
+<td align="center">5000</td>
+<td align="center">单线程：4.13s 四线程：3.72</td>
+<td align="center">单线程：0.23 四线程：0.16</td>
+</tr>
+<tr>
+<td align="center">10000</td>
+<td align="center">单线程：8.36s 四线程：7.56</td>
+<td align="center">单线程：0.44 四线程：0.3</td>
+</tr>
+</tbody></table>
+<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><p>在windows下能够正常运行，但是在linux下连接服务器上数据库报错‘@’localhost’ (using password: YES) - Access denied for user ‘root。排查了密码和权限都没问题，最后发现是因为<strong>Linux和Unix使用的换行符是’\n’，而Windows使用的是’\r\n’</strong>。在windows下，std::getline() 函数默认会将\r\n视为换行符，因此它会读取整个行，但会忽略掉 \r。而在Linux中，std::getline 仅将\n视为换行符，因此在读取到换行符时，\r 会作为普通字符一起读入。</p>
+<p>在加载配置文件函数中增加去除’&#x2F;r’的逻辑：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// 去除空格和&#x27;\r&#x27;</span><br><span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>; i &lt; line.<span class="hljs-built_in">size</span>(); i++) &#123;<br>    <span class="hljs-keyword">if</span>(line[i]==<span class="hljs-string">&#x27; &#x27;</span> || line[i]==<span class="hljs-string">&#x27;\r&#x27;</span>) <span class="hljs-keyword">continue</span>;<br>    str += line[i];<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<div class="note note-info">
+            <p>TIP：GitHub链接：<a target="_blank" rel="noopener" href="https://github.com/ZHCANO/ConnectionPool">https://github.com/ZHCANO/ConnectionPool</a></p>
+          </div>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://juejin.cn/post/7141190286838857735">https://juejin.cn/post/7141190286838857735</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://open.alipay.com/portal/forum/post/126001176">https://open.alipay.com/portal/forum/post/126001176</a></p>
+</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E9%A1%B9%E7%9B%AE/" class="category-chain-item">项目</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/C/" class="print-no-link">#C++</a>
+      
+        <a href="/tags/Linux/" class="print-no-link">#Linux</a>
+      
+        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="print-no-link">#数据库</a>
+      
+        <a href="/tags/%E8%BF%9E%E6%8E%A5%E6%B1%A0/" class="print-no-link">#连接池</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>手写数据库连接池</div>
+      <div>http://zhcan.online/手写数据库连接池/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZHCANO</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年12月28日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/LeanCloud+Hexo%E5%BC%80%E5%90%AF%E8%AF%84%E8%AE%BA%E5%92%8C%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB%E9%87%8F/" title="LeanCloud+Hexo开启评论和文章阅读量">
+                        <span class="hidden-mobile">LeanCloud+Hexo开启评论和文章阅读量</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"SHaViR74uoHFPYKeeWZbmg7x-gzGzoHsz","appKey":"Oo0n0zFtXYWTcelWqOEWFSg5","appid":"SHaViR74uoHFPYKeeWZbmg7x-gzGzoHsz","appkey":"Oo0n0zFtXYWTcelWqOEWFSg5","app_Id":"SHaViR74uoHFPYKeeWZbmg7x-gzGzoHsz","app_Key":"Oo0n0zFtXYWTcelWqOEWFSg5","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      浙ICP备2023054104号-1
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
