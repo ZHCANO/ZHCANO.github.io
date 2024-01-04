@@ -4,6 +4,31 @@
   
   
   <entry>
+    <title>VSCode配置库路径</title>
+    <link href="/VSCode%E9%85%8D%E7%BD%AE%E5%BA%93%E8%B7%AF%E5%BE%84/"/>
+    <url>/VSCode%E9%85%8D%E7%BD%AE%E5%BA%93%E8%B7%AF%E5%BE%84/</url>
+    
+    <content type="html"><![CDATA[<blockquote><p>以muduo网络库的使用为例</p></blockquote><p>(1) 点击扩展-&gt;搜索cpp-&gt;安装C&#x2F;C++ Build Task</p><p><img src="/./VSCode%E9%85%8D%E7%BD%AE%E5%BA%93%E8%B7%AF%E5%BE%84/image-20231229200255560.png"></p><p>(2) 安装完成后，回到项目界面，点击ctrl+shift+B，在弹出的对话框中，点击任务这一行</p><p><img src="/./VSCode%E9%85%8D%E7%BD%AE%E5%BA%93%E8%B7%AF%E5%BE%84/image-20231229200416368.png"></p><p>(3) 选择g++，点击右侧的齿轮</p><p><img src="/./VSCode%E9%85%8D%E7%BD%AE%E5%BA%93%E8%B7%AF%E5%BE%84/image-20231229200612065.png"></p><p>(4) 在生成的<code>task.json</code>文件中添加项目所依赖的库</p><p><img src="/./VSCode%E9%85%8D%E7%BD%AE%E5%BA%93%E8%B7%AF%E5%BE%84/image-20231229200854289.png"></p><p>(5) 按快捷键ctrl+shift+B生成可执行文件</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>工具使用</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>VSCode</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>手写数据库连接池</title>
     <link href="/%E6%89%8B%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/"/>
     <url>/%E6%89%8B%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/</url>
